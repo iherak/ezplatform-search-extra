@@ -20,6 +20,8 @@ services:
         arguments:
             - '@netgen.search.solr.result_extractor.inner'
             - '@ezpublish.search.solr.query.content.facet_builder_visitor.aggregate'
+            - '@ezpublish.search.common.field_name_generator'
+            - '@ezpublish.api.service.content_type'
 
     netgen.search.solr.query.content.query_converter:
         class: Netgen\EzPlatformSearchExtra\Core\Search\Solr\Query\Common\QueryConverter
@@ -36,3 +38,21 @@ services:
             - '@ezpublish.search.solr.query.location.criterion_visitor.aggregate'
             - '@ezpublish.search.solr.query.location.sort_clause_visitor.aggregate'
             - '@ezpublish.search.solr.query.location.facet_builder_visitor.aggregate'
+
+    netgen.search.solr.query.location.query_converter.highlighted:
+        class: Netgen\EzPlatformSearchExtra\Core\Search\Solr\Query\Common\HighlightedQueryConverter
+        decorates: netgen.search.solr.query.location.query_converter
+        arguments:
+            - '@netgen.search.solr.query.location.query_converter.highlighted.inner'
+        calls:
+            - [setHiglightActive, ["$activate_highlighting;netgen_ez_platform_search_extra$"]]
+            - [setHighlightConfiguration, ["$highlighting;netgen_ez_platform_search_extra$"]]
+
+    netgen.search.solr.query.content.query_converter.highlighted:
+        class: Netgen\EzPlatformSearchExtra\Core\Search\Solr\Query\Common\HighlightedQueryConverter
+        decorates: netgen.search.solr.query.content.query_converter
+        arguments:
+            - '@netgen.search.solr.query.content.query_converter.highlighted.inner'
+        calls:
+            - [setHiglightActive, ["$activate_highlighting;netgen_ez_platform_search_extra$"]]
+            - [setHighlightConfiguration, ["$highlighting;netgen_ez_platform_search_extra$"]]
